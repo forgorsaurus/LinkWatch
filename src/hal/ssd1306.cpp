@@ -5,11 +5,7 @@
 Adafruit_SSD1306 display(OLED_WIDTH, OLED_HEIGHT, &Wire, -1);
 
 void OLED::init(){
-    if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_I2C_ADDR, true, false)) {
-        Serial.println("SSD1306 begin GAGAL");
-    } else {
-        Serial.println("SSD1306 OK");
-    }
+    display.begin(SSD1306_SWITCHCAPVCC, OLED_I2C_ADDR, true, false);
 }
 
 void OLED::clear(){
