@@ -1,0 +1,7 @@
+#define ONBOARD_LED_PIN 2
+#define I2C_SDA_PIN 21
+#define I2C_SCL_PIN 22
+
+#define OLED_WIDTH 128
+#define OLED_HEIGHT 64
+#define OLED_I2C_ADDR 0x3c
