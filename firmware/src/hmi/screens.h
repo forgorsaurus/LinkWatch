@@ -1,7 +1,7 @@
 #pragma once
-#include <Adafruit_SSD1306.h>
+#include <Adafruit_ST7735.h>
 #include <Fonts/FreeSerifItalic12pt7b.h>
 
-void drawBootup(Adafruit_SSD1306 &display);
-void drawLED_ON(Adafruit_SSD1306 &display);
-void drawLED_OFF(Adafruit_SSD1306 &display);
+void drawBootup(Adafruit_ST7735 &tft);
+void drawLED_ON(Adafruit_ST7735 &tft);
+void drawLED_OFF(Adafruit_ST7735 &tft);

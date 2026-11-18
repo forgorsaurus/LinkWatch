@@ -1,43 +1,29 @@
 #include <Arduino.h>
 #include "hal/onboard_led.h"
-#include "hal/ssd1306.h"
+#include "hal/st7735.h"
 #include "hal/i2c.h"
+#include "hal/rot_enc.h"
 
 unsigned long time_last = 0; // untuk millis, time_last diinisialisasi 0
-I2C i2c;
-OnboardLED led;
-OLED oled;
+RotaryEncoder rotenc = RotaryEncoder(ENCODER_A_PIN, ENCODER_B_PIN, ENCODER_SW_PIN, 50);
 
 void setup() {
   Serial.begin(115200);
   Serial.println("halo");
-  i2c.init();
-
-  led.init();
-  led.off(); // mattin led
-
-  oled.init();
-
-  oled.setScreen(BOOTUP);
-  delay(3000);
-  time_last = millis();
-  
+  rotenc.init();
 }
 
 void loop() {
-  // ingat! 3000ms = 3 detik
-  // jika saat cek waktu (millis) ternyata selisihnya dengan waktu terakhir adalah 3 detik
-  if (millis()-time_last >= 3000) // iterasi pertama saat millis = 3000 dan time_last = 0
+  if (millis() - time_last >= 100)
   {
-    led.toggle();
-    Serial.print("LED status: ");
-    Serial.println(led.status());
-    if (led.status() == HIGH)
-    {
-      oled.setScreen(LED_ON);
-    } else oled.setScreen(LED_OFF);
-    
-    time_last = millis();// update time_last jadi waktu baru, dalam hal ini 3000
+    Serial.print("pos: ");
+    Serial.print(rotenc.getPosition());
+    Serial.print(" | dir: ");
+    Serial.print(rotenc.getDirection());
+    Serial.print(" | btn: ");
+    Serial.println(rotenc.getButtonState());
+    time_last = millis();
   }
+  
   
 }

@@ -5,3 +5,7 @@
 #define OLED_WIDTH 128
 #define OLED_HEIGHT 64
 #define OLED_I2C_ADDR 0x3c
+
+#define ENCODER_A_PIN 25
+#define ENCODER_B_PIN 33
+#define ENCODER_SW_PIN 32
