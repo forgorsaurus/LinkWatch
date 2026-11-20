@@ -6,6 +6,8 @@ class RotaryEncoder {
         uint8_t clk_pin;
         uint8_t dt_pin;
         uint8_t sw_pin;
+
+        bool isInitialized = false;
         
         volatile int position = 0;
         volatile int direction = 0; //-1 ccw, 1 cw

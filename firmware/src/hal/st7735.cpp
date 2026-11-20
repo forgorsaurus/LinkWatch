@@ -1,11 +1,15 @@
 #include "st7735.h"
 #include "hmi/screens.h"
 
-TFTLCD::TFTLCD(SPIClass &spiBus, int16_t TFT_CS, int16_t TFT_A0, int16_t TFT_RST) : tft(&spiBus, TFT_CS, TFT_A0, TFT_RST) {
+TFTLCD::TFTLCD(SPIClass &spiBus, int16_t cs_pin, int16_t a0_pin, int16_t rst_pin) : tft(&spiBus, cs_pin, a0_pin, rst_pin) {
 }
 
 void TFTLCD::init(){
-    tft.initR(INITR_GREENTAB);
+    if (!isInitialized)
+    {
+        tft.initR(INITR_BLACKTAB);
+        isInitialized = true;
+    }
 }
 
 void TFTLCD::setScreen(Screen screen){
@@ -22,6 +26,10 @@ void TFTLCD::setScreen(Screen screen){
     case LED_OFF:
         drawLED_OFF(tft);
         break;
+
+    case COLORBAR:
+        drawColorBars(tft);
+    break;
     
     default:
         break;

@@ -28,10 +28,14 @@ void IRAM_ATTR RotaryEncoder::shaftMoved(){
 
 
 void RotaryEncoder::init(){
-    pinMode(clk_pin, INPUT_PULLUP);
-    pinMode(dt_pin, INPUT_PULLUP);
-    pinMode(sw_pin, INPUT_PULLUP);
-    attachInterruptArg(digitalPinToInterrupt(clk_pin), isrWrapper, this , FALLING);
+    if (!isInitialized)
+    {
+        pinMode(clk_pin, INPUT_PULLUP);
+        pinMode(dt_pin, INPUT_PULLUP);
+        pinMode(sw_pin, INPUT_PULLUP);
+        attachInterruptArg(digitalPinToInterrupt(clk_pin), isrWrapper, this , FALLING);
+        isInitialized = true;
+    } 
 }
 
 int RotaryEncoder::getPosition(){

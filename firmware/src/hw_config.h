@@ -9,8 +9,11 @@
 #define TFT_SCLK 14
 #define TFT_MOSI 13
 #define TFT_CS 15
+#define TFT_RST 4
+#define TFT_A0 16
 
 #define W5500_SCLK 18
 #define W5500_MISO 19
 #define W5500_MOSI 23
 #define W5500_CS 5
+#define W5500_RST 17
