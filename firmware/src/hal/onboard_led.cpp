@@ -2,6 +2,7 @@
 
 void OnboardLED::init() {
     pinMode(ONBOARD_LED_PIN, OUTPUT);
+    off(); //selalu off setelah init
 }
 
 void OnboardLED::on(){

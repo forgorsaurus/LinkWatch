@@ -19,4 +19,5 @@ class TFTLCD{
         void init();
         void clear();
         void setScreen(Screen screen);
+        Adafruit_ST7735& gfx() {return tft; }
 };

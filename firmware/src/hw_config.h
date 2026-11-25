@@ -1,6 +1,5 @@
 #define ONBOARD_LED_PIN 2
-#define I2C_SDA_PIN 21
-#define I2C_SCL_PIN 22
+#define BOOT_BTN_PIN 0
 
 #define ENCODER_A_PIN 25
 #define ENCODER_B_PIN 33
