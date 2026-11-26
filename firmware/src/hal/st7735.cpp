@@ -12,27 +12,7 @@ void TFTLCD::init(){
     }
 }
 
-void TFTLCD::setScreen(Screen screen){
-    switch (screen)
-    {
-    case BOOTUP:
-        drawBootup(tft);
-        break;
-
-    case LED_ON:
-        drawLED_ON(tft);
-        break;
-
-    case LED_OFF:
-        drawLED_OFF(tft);
-        break;
-
-    case COLORBAR:
-        drawColorBars(tft);
-    break;
-    
-    default:
-        break;
-    }
+Adafruit_ST7735& TFTLCD::gfx(){
+    return tft;
 }
 

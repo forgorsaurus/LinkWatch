@@ -18,7 +18,7 @@ void IRAM_ATTR RotaryEncoder::shaftMoved(){
             position++;
             direction = 1;
         }
-        if (digitalRead(dt_pin) == 1){
+        else if (digitalRead(dt_pin) == 1){
             position--;
             direction = -1;
         }

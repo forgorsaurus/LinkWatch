@@ -37,10 +37,9 @@ void setup() {
   tft.init();
   ui.begin();
 
-  // Self-test W5500 (IP statis supaya tidak memblokir saat kabel belum ada)
+  // Deteksi hardware & link W5500 untuk layar bootup
   spiEth.init();
-  eth.init(IPAddress(192, 168, 88, 50), IPAddress(8, 8, 8, 8),
-           IPAddress(192, 168, 88, 1), IPAddress(255, 255, 255, 0));
+  eth.probe();
   delay(1500);   // beri waktu PHY auto-negotiation sebelum cek link
   bool w5500Ok = eth.isHardwareConnected();
   bool linkUp  = eth.isLinkUp();
@@ -48,6 +47,25 @@ void setup() {
 
   ui.showBoot(w5500Ok, linkUp);
   delay(2000);
+
+  // Layar Konfigurasi IP (setelah bootup)
+  NetConfig userCfg = ui.promptIpConfig(rotenc);
+
+  // Nilai default sebelum eth.init() bila ada field yang kosong / tidak dikonfigurasi user
+  const IPAddress defaultIp(DEFAULT_IP[0], DEFAULT_IP[1], DEFAULT_IP[2], DEFAULT_IP[3]);
+  const IPAddress defaultDns(DEFAULT_DNS[0], DEFAULT_DNS[1], DEFAULT_DNS[2], DEFAULT_DNS[3]);
+  const IPAddress defaultGateway(DEFAULT_GATEWAY[0], DEFAULT_GATEWAY[1], DEFAULT_GATEWAY[2], DEFAULT_GATEWAY[3]);
+  const IPAddress defaultSubnet(DEFAULT_SUBNET[0], DEFAULT_SUBNET[1], DEFAULT_SUBNET[2], DEFAULT_SUBNET[3]);
+
+  IPAddress ip     = userCfg.ipSet      ? userCfg.ip      : defaultIp;
+  IPAddress dns    = userCfg.dnsSet     ? userCfg.dns     : defaultDns;
+  IPAddress gw     = userCfg.gatewaySet ? userCfg.gateway : defaultGateway;
+  IPAddress subnet = userCfg.subnetSet  ? userCfg.subnet  : defaultSubnet;
+
+  eth.init(ip, dns, gw, subnet);
+  Serial.printf("Net Konfig -> IP: %s | DNS: %s | GW: %s | Mask: %s\n",
+                ip.toString().c_str(), dns.toString().c_str(),
+                gw.toString().c_str(), subnet.toString().c_str());
 }
 
 void loop() {
@@ -76,4 +94,5 @@ void loop() {
 
   // 4) Update layar (putar encoder = scroll tabel hasil)
   ui.update(runner, rotenc.getPosition());
+  Serial.printf("dir: %d, pos: %d", rotenc.getDirection(), rotenc.getPosition());
 }

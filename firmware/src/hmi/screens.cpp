@@ -45,6 +45,93 @@ void drawBootup(Adafruit_ST7735 &tft, bool w5500Ok, bool linkUp) {
   txt(tft, 64, 90, linkUp ? Color::GREEN : Color::YELLOW, Color::BG, linkUp ? "TERSAMBUNG" : "BELUM ADA");
 }
 
+// ---------- konfigurasi IP ----------
+static const char *const IP_CFG_LABELS[IP_CFG_FIELD_COUNT] = {
+  "IP",
+  "DNS",
+  "Default Gateway",
+  "Subnet Mask",
+};
+
+static int ipFieldBoxY(uint8_t fieldIdx) {
+  return 16 + (int)fieldIdx * 23;
+}
+
+void drawIpConfigOctets(Adafruit_ST7735 &tft, const IpConfigState &st, uint8_t fieldIdx) {
+  if (fieldIdx >= IP_CFG_FIELD_COUNT) return;
+
+  const IpField &f = st.fields[fieldIdx];
+  const bool isSel = (st.selectedItem == fieldIdx);
+  const bool isEditing = isSel && (st.editingOctet >= 0);
+
+  const int valY = ipFieldBoxY(fieldIdx) + 11;
+  const uint16_t boxBg = isEditing ? Color::EDIT_BG : (isSel ? Color::SEL_BG : Color::BG);
+
+  if (isEditing) {
+    // Format lebar tetap 3 karakter per oktet (" 10. 10. 10.___") dengan highlight pada oktet aktif
+    for (uint8_t o = 0; o < 4; o++) {
+      char buf[6];
+      if (f.octets[o] < 0) {
+        strcpy(buf, "___");
+      } else {
+        snprintf(buf, sizeof buf, "%3d", (int)f.octets[o]);
+      }
+      const bool activeOct = (st.editingOctet == (int8_t)o);
+      const uint16_t fg = Color::WHITE;
+      const uint16_t bg = activeOct ? Color::PINK : boxBg;
+      txt(tft, 6 + (int)o * 24, valY, fg, bg, buf);
+      if (o < 3) {
+        txt(tft, 6 + (int)o * 24 + 18, valY, Color::WHITE, boxBg, ".");
+      }
+    }
+  } else {
+    // Format ringkas bila sudah lengkap ("10.10.10.3"), atau "___" untuk oktet yang belum diisi
+    char line[20] = "";
+    for (uint8_t o = 0; o < 4; o++) {
+      char part[6];
+      if (f.octets[o] < 0) {
+        strcpy(part, "___");
+      } else {
+        snprintf(part, sizeof part, "%d", (int)f.octets[o]);
+      }
+      strcat(line, part);
+      if (o < 3) strcat(line, ".");
+    }
+    txt(tft, 6, valY, Color::WHITE, boxBg, line);
+  }
+}
+
+void drawIpConfigItem(Adafruit_ST7735 &tft, const IpConfigState &st, uint8_t itemIdx) {
+  if (itemIdx < IP_CFG_FIELD_COUNT) {
+    const bool isSel = (st.selectedItem == itemIdx);
+    const bool isEditing = isSel && (st.editingOctet >= 0);
+    const uint16_t boxBg = isEditing ? Color::EDIT_BG : (isSel ? Color::SEL_BG : Color::BG);
+    const uint16_t lblFg = isEditing ? Color::PINK : (isSel ? Color::YELLOW : Color::GRAY);
+
+    const int boxY = ipFieldBoxY(itemIdx);
+    tft.fillRect(2, boxY, SCR_W - 4, 21, boxBg);
+    txt(tft, 6, boxY + 2, lblFg, boxBg, IP_CFG_LABELS[itemIdx]);
+    drawIpConfigOctets(tft, st, itemIdx);
+  } else if (itemIdx == IP_CFG_FIELD_COUNT) {
+    // Tombol | Confirm |
+    const bool isSel = (st.selectedItem == IP_CFG_FIELD_COUNT);
+    const uint16_t bg = isSel ? Color::SEL_BG : Color::BG;
+    const uint16_t fg = isSel ? Color::YELLOW : Color::LIGHT;
+    tft.fillRect(41, 110, 78, 14, bg);
+    txt(tft, 47, 113, fg, bg, "| Confirm |");
+  }
+}
+
+void drawIpConfigScreen(Adafruit_ST7735 &tft, const IpConfigState &st) {
+  tft.fillScreen(Color::BG);
+  tft.fillRect(0, 0, SCR_W, 14, Color::PINK);
+  txt(tft, 4, 3, Color::WHITE, Color::PINK, "Konfigurasi IP");
+
+  for (uint8_t i = 0; i < IP_CFG_ITEM_COUNT; i++) {
+    drawIpConfigItem(tft, st, i);
+  }
+}
+
 // ---------- idle ----------
 void drawIdle(Adafruit_ST7735 &tft) {
   tft.fillScreen(Color::BG);

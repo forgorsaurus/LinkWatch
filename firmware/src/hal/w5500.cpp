@@ -13,13 +13,20 @@ void EthModule::setMac(const byte new_mac[6]) {
 }
 
 void EthModule::hardReset() {
-    if (rst_pin >= 0) {
+    if (!hasReset && rst_pin >= 0) {
         pinMode(rst_pin, OUTPUT);
         digitalWrite(rst_pin, LOW);
         delay(50);
         digitalWrite(rst_pin, HIGH);
         delay(200);
+        hasReset = true;
     }
+}
+
+void EthModule::probe() {
+    hardReset();
+    Ethernet.init(cs_pin);
+    Ethernet.linkStatus();
 }
 
 bool EthModule::init() {
